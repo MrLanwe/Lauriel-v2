@@ -5,22 +5,34 @@ import urllib2
 
 class GetUrls():
 
+    """
+    Class responsible for extracting possible url's from websites
+    Input: str  | website address
+    Output: str | list of possible websites and internal pages
+    """
+
     scan_depth = 0
     scan_width = 0
 
     def __init__(self, url, depth=2, width=1):
         self.url = url
+        self.urls = []
 
     def get_urls(self):
-        pass
+        self.html = urllib2.urlopen(self.url)
+        self.parsed_web = BeautifulSoup(
+            self.html, from_encoding=self.html.info().getparam('charset'))
+        self.possible_urls = [link['href'] for link in
+                              self.parsed_web.find_all('a', href=True)]
 
 
 class ValidateUrl(GetUrls):
 
     """
-    Class for digging out urls from websites
-    Required Inputs: urls
-    Optional Inputs: depth, width
+    Class responsible for checking if urls are correct and that they are
+    accesible.
+    Input: str  | url
+    Output: str | valid url
     """
 
     correct_syntax_pattern = ".*http.*"
