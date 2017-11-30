@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import os
-import urllib2
+from urllib3 import PoolManager
 
 
 class GetUrls():
@@ -16,12 +16,11 @@ class GetUrls():
 
     def __init__(self, url, depth=2, width=1):
         self.url = url
-        self.urls = []
 
     def get_urls(self):
-        self.html = urllib2.urlopen(self.url)
-        self.parsed_web = BeautifulSoup(
-            self.html, from_encoding=self.html.info().getparam('charset'))
+        self.http = PoolManager()
+        self.html = self.http.request('GET', self.url)
+        self.parsed_web = BeautifulSoup(self.html.data, 'html.parser')
         self.possible_urls = [link['href'] for link in
                               self.parsed_web.find_all('a', href=True)]
 
